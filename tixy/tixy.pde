@@ -5,7 +5,7 @@ void setup() {
 }
 
 float tixy( float t, int i, int x, int y ) {
-  return sin(t*i/x) + cos(t*i/y);
+  return x-(t*2)%20 + sin(t*5);
 }
 
 void draw() {
