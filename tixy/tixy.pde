@@ -5,14 +5,14 @@ void setup() {
 }
 
 float tixy( float t, int i, int x, int y ) {
-  return -0.5f+x/16.0f+sin(t*PI)*(16-y)/16.0f;
+  return sin(t*i/x) + cos(t*i/y);
 }
 
 void draw() {
   clear();
   for( int x = 0; x < 16; ++x ) {
     for( int y = 0; y < 16; ++y ) {
-      float v = tixy(millis()/1000.0f,y*16+x,x,y);
+      float v = tixy(millis()/1000.0f,(y*16+x)+1,x+1,y+1);
       if( v < -1 ) v = -1;
       if( v > 1 ) v = 1;
       if( v < 0 ) 
