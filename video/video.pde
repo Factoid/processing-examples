@@ -13,7 +13,7 @@ void setup() {
   size(320, 240);
   
   // Step 3. Initialize Capture object.
-  video = new Capture(this, 320, 240);
+  video = new Capture(this, 256, 256);
   
   // Step 4. Start the capturing process.
   video.start();
