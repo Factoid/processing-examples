@@ -1,6 +1,6 @@
 int ground; 
-int mSize = 40;
-int mPosX = 30;
+float mSize = 40;
+float mPosX = 30;
 float mPosY;
 float mSpdY = 0;
 float gravity = 0.5f;
@@ -10,10 +10,15 @@ boolean jump = false;
 boolean left = false;
 boolean right = false;
 
+float blockX = 200;
+float blockY;
+float blockSize = 40;
+
 void setup() {
   size(800,600);
   ground = 2*height/3;
   mPosY = ground - mSize;
+  blockY = ground - blockSize;
 }
 
 void keyPressed() {
@@ -68,10 +73,10 @@ void keyReleased() {
 
 void draw() {
   if( left ) {
-    mPosX -= 1;
+    mPosX -= 5;
   }
   if( right ) {
-    mPosX += 1;
+    mPosX += 5;
   }
   if( jump ) {
     if( onGround ) {
@@ -93,6 +98,20 @@ void draw() {
     mSpdY = 0;
     mPosY = ground - mSize;
   }
+
+  float dl = (mPosX + mSize) - blockX;
+  float dr = mPosX - (blockX + blockSize);
+  float dt = (mPosY + mSize) - blockY;
+  if( dl > 0 && dt > 0 && dr < 0 ) {
+    if( mPosX < blockX + blockSize/2 ) {
+      mPosX = blockX - mSize;
+    } else {
+      mPosX = blockX + blockSize;
+    }
+  }
   
   rect(mPosX,mPosY,mSize,mSize);
+  
+  fill(220,120,0);
+  rect(blockX,blockY,blockSize,blockSize);
 }
