@@ -1,23 +1,34 @@
-float scale = 10.0f;
-float timeScale = 1.2f;
-PImage ramp;
+float scale = 0.02f;
+float timeScale = 1.0f;
+PImage[] ramp;
+PImage output;
+PGraphics pg;
+void settings() {
+  System.setProperty("jogl.disable.openglcore", "false");
+  size(400,400);
+//  pg = createGraphics(400,400,P2D);
+}
 
-int[] pVals;
-void setup() {
-  size(800,600);
-  pVals = new int[7];
-  ramp = loadImage("blue_flame.png");
-  if( ramp != null ) {
-    ramp.loadPixels();
+void setup() {  
+  frameRate(200);
+  ramp = new PImage[2];
+  ramp[0] = loadImage("blue_flame.png");
+  ramp[1] = loadImage("red_flame.png");
+  for( PImage img : ramp ) {
+    if( img == null ) continue;
+    img.loadPixels();
   }
-//  noiseDetail(4,0.5f);
+  output = createImage(400,400,RGB);
+  output.loadPixels();
+  noiseDetail(3,0.3f);
 }
 
 color getCol( int i ) {
-  if( ramp != null ) {
-    return ramp.pixels[pVals[i]];
+  PImage img = ramp[(time/10000)%ramp.length];
+  if( img != null ) {
+    return img.pixels[i];
   }
-  return lerpColor( color(0,0,0), color(0,0,255), pVals[i]/255.0f);
+  return lerpColor( color(0,0,0), color(0,0,255), i/255.0f);
 }
 
 int min = 1000;
@@ -34,25 +45,14 @@ void draw() {
   } else {
     time += (int)(1000.0f/fps);
   }
-  for( int x = 0; x < 7; ++x ) {
-    pVals[x] = (int)min(255,255*noise(x*scale,timeScale * time/1000.0f));
-    if( pVals[x] < min ) min = pVals[x];
-    if( pVals[x] > max ) max = pVals[x];
-  } 
-  background(0);
-  translate(width/2,height/2);
-  noStroke();
-  fill( getCol(6) );
-  
-  int sz = 110;
-  circle(0,0,sz);
-  for( int i = 0; i < 6; ++i ) {
-    float x = sin(i*2.0f*PI/6.0f) * sz*2;
-    float y = cos(i*2.0f*PI/6.0f) * sz*2;
-    fill( getCol(i) );
-    circle(x,y,sz);
+  float dt = time/1000.0f*timeScale;
+  for( int i = 0; i < output.pixels.length; ++i ) {
+      //output.pixels[i] = getCol( (int)min(255,255*) );
+      output.pixels[i] = getCol((int)(255*noise((i%400)*scale+dt,(i/400)*scale+2*dt)));
   }
-  
+  output.updatePixels();
+  image(output,0,0);
+  text(frameRate,20,20);
   if( export ) saveFrame( "frames/####.png" );
   if( maxtime > 0 && time >= maxtime ) {
     exit();
